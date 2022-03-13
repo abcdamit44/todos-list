@@ -1,17 +1,14 @@
 import React from 'react'
 
-export default function Todositem(props) {
+export default function Todositem({todo,onDelete}) {
   return (
     <>
-    <div className="w-25 p-2">
-        <div className="card p-3 ">
-            <h4>{props.todo.title}</h4>
-            <p>{props.todo.desc}</p>
-            <button className='btn btn-danger' onClick={props.onDelete}>Delete</button>
+        <div className=" py-3 ">
+            <h4>{todo.title}</h4>
+            <p>{todo.desc}</p>
+            <button className='btn btn-sm btn-danger' onClick={()=>{onDelete(todo)}}>Delete</button>
         </div>
-    </div>
-    
-    <hr />
+      <hr className='m-0' />
         
     </>
   )

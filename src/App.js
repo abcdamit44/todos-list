@@ -1,46 +1,80 @@
+import { useState, useEffect } from 'react';
 import './App.css';
+import Counter from './components/Counter';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Todos from './components/Todos';
+import AddTodo from './components/AddTodo';
+import About from './components/About';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Routes
+} from "react-router-dom";
 
 function App() {
-  let todoList = [
-    {
-      sno:1,
-      title: "React",
-      desc: "Learning React"
-    },
-    {
-      sno:2,
-      title: "JavaScript",
-      desc: "Learning JavaScript"
-    },
-    {
-      sno:3,
-      title: "CSS",
-      desc: "Learning CSS"
-    },
-    {
-      sno:4,
-      title: "HTML",
-      desc: "Learning HTML"
-    },
-    {
-      sno:5,
-      title: "JAVA",
-      desc: "Learning JAVA"
-    },
-  ];
 
-  const onDelete = ()=>{
-    console.log(`You Deleted`);
+  let initTodos;
+  if (localStorage.getItem("todoList") === null) {
+    initTodos = [];
+  } else {
+    initTodos = JSON.parse(localStorage.getItem("todoList"))
   }
+
+  const onDelete = (todo) => {
+    setTodoList(todoList.filter((e) => {
+      return e !== todo;
+    }))
+    localStorage.setItem("todoList", JSON.stringify(todoList));
+  }
+  const addTodo = (title, desc) => {
+    let sno = 0;
+    if (todoList.length == 0) {
+      sno = 0;
+    } else {
+      sno = todoList[todoList.length - 1].sno + 1;
+    }
+    const myTodo = {
+      sno: sno,
+      title: title,
+      desc: desc
+    }
+    setTodoList([...todoList, myTodo])
+    console.log(myTodo);
+  }
+
+
+  let [todoList, setTodoList] = useState(initTodos);
+  useEffect(() => {
+    localStorage.setItem("todoList", JSON.stringify(todoList));
+
+  }, [todoList])
+
+
   return (
-    <div className="App">
-    <Navbar title="Amit Todos"/>
-    <Todos todolist={todoList} onDelete={onDelete}/>
-    <Footer/>
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar title="Amit Todos" />
+
+        <Routes>
+          <Route path="/" element={
+            <>
+              <AddTodo addTodo={addTodo} />
+              <Todos todolist={todoList} onDelete={onDelete} />
+            </>
+          } />
+
+
+          <Route path="/about" element={<About />} />
+          <Route path="/counter" element={<Counter />} />
+
+
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
